@@ -16,89 +16,83 @@ end
 
 csv_payroll = CSV.read("payroll.csv", headers: true)
 
+payrolls_data = Hash.new
+
+csv_payroll.each do |payroll|
+    payrolls_data[payroll["worker_id"]] = payroll.to_h
+end
+
+#ap employees_data = payrolls_data.merge(employees_data)
+
+ payrolls_data = employees_data.merge(payrolls_data)
+
+
 #preparamos las dos posibles uniones, las que dan error y las que estan ok
 merge = {errors: [], ok: []}
 
-def valid?(e)
-    ap e
-ap e['TELEPHONE']
-     e['ID'] == true
-       
-    e['worker_id'] == true
-    
-  
-#   xxxx
-    #e[:errors] = "Falta teléfono"
+# creamos metodo de validación
+def validate(e)
+
+    if e['ID'].blank?
+        e[:errors] = "Falta ID"
+   end
+
+   if e['DNI'].blank?
+        e[:errors] = "Falta DNI"
+    end
+
+   if e['TELEPHONE'].blank?
+        e[:errors] = "Falta teléfono"
+   end
+
     e
 end
 
-#recorremos fichero nominas
-csv_payroll.each do |payroll|
-    #traemos el id del empleado desde el cvs de empleados (OJO QUE SIN DATOS DE NOMINA NO LO TRAE) hay que solucionarlo antes
-    employee = employees_data[payroll['worker_id']]
-   
+#recorremos hash nominas
+payrolls_data.each do |payroll|
+
+    #traemos el id del empleado desde el cvs de empleados y del csv de nominas por si alguna no tiene datos de empleado
+    employee = payrolls_data[payroll[0]] && employees_data[payroll[0]]
+
     #comprobamos que ese empleado existe en el fichero
     if employee
-        #unimos la info de los dos csv segun la id
-        employee_payroll = payroll.to_h.merge(employee)
-      #comprobamos errores
-        if employee_payroll = valid?(employee_payroll)
-            #ap employee_payroll
-            merge[:ok] << employee_payroll
-            #ap merge[:ok]
-        else
-            merge[:errors] << employee_payroll
-            #ap merge[:errors]
-        end
+
+    #unimos la info de los dos csv segun la id
+        employee_payroll = payroll[1].to_h.merge(employee)
+
+    #añadimos errores
+        employee_payroll = validate(employee_payroll)
+        
+    #mergeamos
+        merge[:ok] << employee_payroll
+      
+
+    #nominas sin empleado asignado
     else
-        employee_payroll = payroll.to_h
+        employee_payroll = payroll[1].to_h
+        
         employee_payroll[:errors] = 'Nómina sin datos de empleado'
+           
         merge[:errors] << employee_payroll
-        #ap merge[:errors]
     end
 
 end
 
-# lines2.each do |l|  # recorremos fichero 2
-#   from_1 = data1[ l[:worker_id] ] # cogemos los datos de esa linea del fichero 1
-#   if from_1 # comprobamos si existía en fichero 1
-#     m = l.to_h.merge(from_1) # juntamos los datos
-#     if m = valid?(m) # comprobamos si son validos
-#       merge[:ok] << m 
-#     else
-#       merge[:errors] << m
-#     end
-#   else # significa que no está en fichero 1
-#     m = l.to_h
-#     m[:error] = "Nómina sin empleado" # le ponemos un error para ser consistentes con valid?
-#     merge[:errors] << m
-#   end
-# end
 
-# # dump de ok
+CSV.open("result_#{Date.today.strftime}.csv", 'w') do |csv|
 
-# CSV.open(xxxx) do |csv|
-#   merge[:ok].each{|l| csv << l.values_at(xxxxx)  }
-# end
-
-# # dump de errors
-# merge[:errors]
-
-
-CSV.open('result.csv', 'w') do |csv|
-
-    csv << %w(id dni name surname telephone email user_principal_name area iban start_date end_date company_id company_name net_salary extrapayroll_1 extrapayroll_2 extrapayroll_3 )
+    csv << %w(id dni name surname telephone email user_principal_name area iban start_date end_date company_id company_name net_salary extrapayroll_1 extrapayroll_2 extrapayroll_3, errors )
 
     merge[:ok].each do |employee| 
-        csv << employee.values_at('ID', 'DNI', 'NAME', 'SURNAME', 'TELEPHONE', 'EMAIL', 'USER_PRINCIPAL_NAME', 'AREA', 'IBAN', 'START_DATE', 'END_DATE', 'COMPANY_ID', 'COMPANY_NAME', 'net_salary', 'extrapayroll_1', 'extrapayroll_2', 'extrapayroll_3')
+        csv << employee.values_at('ID', 'DNI', 'NAME', 'SURNAME', 'TELEPHONE', 'EMAIL', 'USER_PRINCIPAL_NAME', 'AREA', 'IBAN', 'START_DATE', 'END_DATE', 'COMPANY_ID', 'COMPANY_NAME', 'net_salary', 'extrapayroll_1', 'extrapayroll_2', 'extrapayroll_3', :errors)
     end
 end
 
-CSV.open('errors.csv', 'w') do |csv|
+CSV.open("errors_#{Date.today.strftime}.csv", 'w') do |csv|
 
-    csv << %w(id dni name surname telephone email user_principal_name area iban start_date end_date company_id company_name net_salary extrapayroll_1 extrapayroll_2 extrapayroll_3 )
+    csv << %w(id dni name surname telephone email user_principal_name area iban start_date end_date company_id company_name net_salary extrapayroll_1 extrapayroll_2 extrapayroll_3 errors)
 
     merge[:errors].each do |employee| 
-        csv << employee.values_at('ID', 'DNI', 'NAME', 'SURNAME', 'TELEPHONE', 'EMAIL', 'USER_PRINCIPAL_NAME', 'AREA', 'IBAN', 'START_DATE', 'END_DATE', 'COMPANY_ID', 'COMPANY_NAME', 'net_salary', 'extrapayroll_1', 'extrapayroll_2', 'extrapayroll_3')
+        csv << employee.values_at('ID', 'DNI', 'NAME', 'SURNAME', 'TELEPHONE', 'EMAIL', 'USER_PRINCIPAL_NAME', 'AREA', 'IBAN', 'START_DATE', 'END_DATE', 'COMPANY_ID', 'COMPANY_NAME', 'net_salary', 'extrapayroll_1', 'extrapayroll_2', 'extrapayroll_3', :errors)
     end
 end

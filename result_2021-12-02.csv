@@ -1,0 +1,6 @@
+id,dni,name,surname,telephone,email,user_principal_name,area,iban,start_date,end_date,company_id,company_name,net_salary,extrapayroll_1,extrapayroll_2,"extrapayroll_3,",errors
+026034,05915284Y,Francisco Javier,Morena Lopez,646504833,javier.de.gregorio@verisure.com,javier.de.32e3@gmail.com,General Group,ES7301280015150100038093,01/06/2018,,C_ES02,Iberia Holding S A U,1232.25,2341.35,1222.35,,
+102ASS,27302933R,Tomas,Suarez Sanz,647336123,albertojose.suarez@gmail.com,d23d.suarez@gmail.com,Dirección de Operaciones,ES2114650130041711584196,05/11/2007,,C_ES01,España S.A.U,832.70,941.25,732.50,1231.0,
+102ELH,28747366B,Luis,Sobrado Huertas,677995048,eduardo.lozano@gmail.com,luis.lozano@gmail.com,Dirección de Operaciones,ES4501820439680201586554,21/01/2003,,C_ES01,España S.A.U,,,,,
+236717,18974499N,Sergio,Perez Marcos,,adrian.bort@gmail.com,ef3vd.bort@gmail.com,Dirección de Ventas,,06/09/2021,15/11/2021,C_ES01,España S.A.U,1832.43,,,,Falta teléfono
+D19030,52423643L,Iker,Lara Seda,647813979,david.lara@gmail.com,grgs.22@gmail.com,Dirección de Ventas,ES2221001981380100449857,07/06/2010,,C_ES01,España S.A.U,1170.50,680.75,1222.35,,
